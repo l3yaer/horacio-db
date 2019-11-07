@@ -29,6 +29,8 @@ uint32_t table_max_rows();
 void serialize_row(Row* source, void* destination);
 void deserialize_row(void* source, Row* destination);
 void print_row(Row* row);
-void* row_slot(Table* table, uint32_t row_num);
+
+uint32_t row_size();
+uint32_t rows_per_page();
 
 #endif //HORACIODB_TABLE_H

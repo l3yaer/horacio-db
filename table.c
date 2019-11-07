@@ -40,14 +40,6 @@ void print_row(Row *row) {
   printf("( %d %s %s )\n", row->id, row->username, row->email);
 }
 
-void* row_slot(Table* table, uint32_t row_num) {
-  uint32_t page_num = row_num / ROWS_PER_PAGE;
-  void* page = get_page(table->pager, page_num);
-  uint32_t row_offset = row_num % ROWS_PER_PAGE;
-  uint32_t byte_offset = row_offset * ROW_SIZE;
-  return page + byte_offset;
-}
-
 uint32_t table_max_rows() {
   return TABLE_MAX_ROWS;
 }
@@ -115,3 +107,11 @@ void clear_page(Pager *pager, uint32_t page_num, uint32_t size) {
   pager->pages[page_num] = NULL;
 }
 
+
+uint32_t row_size() {
+  return ROW_SIZE;
+}
+
+uint32_t rows_per_page() {
+  return ROWS_PER_PAGE;
+}
