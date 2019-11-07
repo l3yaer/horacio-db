@@ -7,7 +7,8 @@ struct table;
 
 typedef struct cursor {
   struct table* table;
-  uint32_t row_num;
+  uint32_t page_num;
+  uint32_t cell_num;
   bool end_of_table;
 } Cursor;
 

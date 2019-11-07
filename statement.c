@@ -3,6 +3,8 @@
 #include "input.h"
 #include "table.h"
 #include "cursor.h"
+#include "pager.h"
+#include "treeNode.h"
 
 typedef struct statement{
   StatementType type;
@@ -33,14 +35,15 @@ ExecuteResult execute_statement(Statement* statement, Table* table) {
 }
 
 ExecuteResult execute_insert(Statement *statement, Table *table) {
-  if (table->num_rows >= table_max_rows()) {
+  void* node = get_page(table->pager, table->root_page_num);
+  if ((*leaf_node_num_cells(node) >= LEAF_NODE_MAX_CELLS)) {
     return EXECUTE_TABLE_FULL;
   }
+
   Row* row_to_insert = &(statement->row_to_insert);
   Cursor* cursor = table_end(table);
 
-  serialize_row(row_to_insert, cursorValue(cursor));
-  table->num_rows += 1;
+  leaf_node_insert(cursor, row_to_insert->id, row_to_insert);
 
   free(cursor);
   return EXECUTE_SUCCESS;

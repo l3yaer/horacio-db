@@ -19,18 +19,21 @@ typedef struct row{
 typedef struct table{
   uint32_t num_rows;
   struct pager* pager;
+  uint32_t root_page_num;
 } Table;
 
 Table* db_open(const char* filename);
 void db_close(Table *table);
 
-uint32_t table_max_rows();
-
 void serialize_row(Row* source, void* destination);
 void deserialize_row(void* source, Row* destination);
 void print_row(Row* row);
 
-uint32_t row_size();
-uint32_t rows_per_page();
-
+static const uint32_t ID_SIZE = size_of_attribute(Row, id);
+static const uint32_t USERNAME_SIZE = size_of_attribute(Row, username);
+static const uint32_t EMAIL_SIZE = size_of_attribute(Row, email);
+static const uint32_t ID_OFFSET = 0;
+static const uint32_t USERNAME_OFFSET = ID_OFFSET + ID_SIZE;
+static const uint32_t EMAIL_OFFSET = USERNAME_OFFSET + USERNAME_SIZE;
+static const uint32_t ROW_SIZE = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
 #endif //HORACIODB_TABLE_H
