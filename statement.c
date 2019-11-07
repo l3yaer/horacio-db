@@ -47,7 +47,7 @@ ExecuteResult execute_select(Statement *statement, Table *table) {
 PrepareResult prepare_insert(struct input_buffer* input_buffer, Statement* statement) {
   statement->type = STATEMENT_INSERT;
 
-  char* keyword = strtok(input_buffer->buffer,  "");
+  char* keyword = strtok(input_buffer->buffer, " ");
   char* id_string = strtok(NULL, " ");
   char* username = strtok(NULL, " ");
   char* email = strtok(NULL, " ");

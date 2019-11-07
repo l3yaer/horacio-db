@@ -8,22 +8,22 @@
 #define COLUMN_USERNAME_SIZE 32
 #define COLUMN_EMAIL_SIZE 255
 
-typedef struct {
+struct pager;
+
+typedef struct row{
   uint32_t id;
   char username[COLUMN_USERNAME_SIZE + 1];
   char email[COLUMN_EMAIL_SIZE + 1];
 } Row;
 
-
-#define TABLE_MAX_PAGES 100
-
-typedef struct {
+typedef struct table{
   uint32_t num_rows;
-  void* pages[TABLE_MAX_PAGES];
+  struct pager* pager;
 } Table;
 
-Table* new_table();
-void free_table(Table* table);
+Table* db_open(const char* filename);
+void db_close(Table *table);
+
 uint32_t table_max_rows();
 
 void serialize_row(Row* source, void* destination);
