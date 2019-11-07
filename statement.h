@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #ifndef HORACIODB_STATEMENT_H
 #define HORACIODB_STATEMENT_H
@@ -12,7 +13,9 @@ struct input_buffer;
 typedef enum {
   PREPARE_SUCCESS,
   PREPARE_SYNTAX_ERROR,
-  PREPARE_UNRECOGNIZED_STATEMENT
+  PREPARE_UNRECOGNIZED_STATEMENT,
+  PREPARE_STRING_TOO_LONG,
+  PREPARE_NEGATIVE_ID
 } PrepareResult;
 
 typedef enum {
@@ -27,8 +30,8 @@ typedef enum {
 
 typedef struct {
   uint32_t id;
-  char username[COLUMN_USERNAME_SIZE];
-  char email[COLUMN_EMAIL_SIZE];
+  char username[COLUMN_USERNAME_SIZE + 1];
+  char email[COLUMN_EMAIL_SIZE + 1];
 } Row;
 
 typedef struct {
