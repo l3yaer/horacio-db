@@ -4,6 +4,7 @@
 #include <string.h>
 #include "statement.h"
 #include "metaCommand.h"
+#include "table.h"
 #include "input.h"
 
 int main(int argc, char* argv[]) {
@@ -16,6 +17,7 @@ int main(int argc, char* argv[]) {
   Table* table = db_open(filename);
 
   InputBuffer* input_buffer = input_buffer_new();
+  struct statement *statement = createStatement();
   while(true) {
     print_prompt();
     input_buffer_read(input_buffer);
@@ -30,8 +32,7 @@ int main(int argc, char* argv[]) {
       }
     }
 
-    Statement statement;
-    switch (prepare_statement(input_buffer, &statement)) {
+    switch (prepare_statement(input_buffer, statement)) {
       case PREPARE_SUCCESS:
         break;
       case PREPARE_SYNTAX_ERROR:
@@ -48,7 +49,7 @@ int main(int argc, char* argv[]) {
         continue;
     }
 
-    switch (execute_statement(&statement, table)) {
+    switch (execute_statement(statement, table)) {
       case EXECUTE_SUCCESS:
         printf("Executed. \n");
         break;

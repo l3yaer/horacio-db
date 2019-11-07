@@ -18,6 +18,12 @@ const uint32_t ROW_SIZE = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
 const uint32_t ROWS_PER_PAGE = PAGE_SIZE / ROW_SIZE;
 const uint32_t TABLE_MAX_ROWS = ROWS_PER_PAGE * TABLE_MAX_PAGES;
 
+void remove_full_pages(Pager *pager, uint32_t num_full_pages);
+
+void remove_partial_pages(Table *table, Pager *pager, uint32_t num_full_pages);
+
+void clear_page(Pager *pager, uint32_t page_num, uint32_t size);
+
 void serialize_row(Row* source, void* destination) {
   memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
   strncpy(destination + USERNAME_OFFSET, source->username, USERNAME_SIZE);
@@ -29,7 +35,6 @@ void deserialize_row(void* source, Row* destination) {
   memcpy(&(destination->username), source + USERNAME_OFFSET, USERNAME_SIZE);
   memcpy(&(destination->email), source + EMAIL_OFFSET, EMAIL_SIZE);
 }
-
 
 void print_row(Row *row) {
   printf("( %d %s %s )\n", row->id, row->username, row->email);
@@ -62,27 +67,9 @@ void db_close(Table *table) {
   Pager* pager = table->pager;
   uint32_t num_full_pages = table->num_rows / ROWS_PER_PAGE;
 
-  //remove full pages
-  for (uint32_t i = 0; i < num_full_pages; ++i) {
-    if(pager->pages[i] == NULL){
-      continue;
-    }
+  remove_full_pages(pager, num_full_pages);
 
-    pager_flush(pager, i, PAGE_SIZE);
-    free(pager->pages[i]);
-    pager->pages[i] = NULL;
-  }
-
-  //remove partial pages
-  uint32_t num_additional_rows = table->num_rows % ROWS_PER_PAGE;
-  if(num_additional_rows > 0) {
-    uint32_t page_num = num_full_pages;
-    if(pager->pages[page_num] != NULL) {
-      pager_flush(pager, page_num, num_additional_rows * ROW_SIZE);
-      free(pager->pages[page_num]);
-      pager->pages[page_num] = NULL;
-    }
-  }
+  remove_partial_pages(table, pager, num_full_pages);
 
   int result = close(pager->file_descriptor);
   if(result == -1) {
@@ -101,3 +88,30 @@ void db_close(Table *table) {
   free(pager);
   free(table);
 }
+
+void remove_partial_pages(Table *table, Pager *pager, uint32_t num_full_pages) {
+  uint32_t num_additional_rows = table->num_rows % ROWS_PER_PAGE;
+  if(num_additional_rows > 0) {
+    uint32_t page_num = num_full_pages;
+    if(pager->pages[page_num] != NULL) {
+      clear_page(pager, page_num, num_additional_rows * ROW_SIZE);
+    }
+  }
+}
+
+void remove_full_pages(Pager *pager, uint32_t num_full_pages) {
+  for (uint32_t i = 0; i < num_full_pages; ++i) {
+    if(pager->pages[i] == NULL){
+      continue;
+    }
+
+    clear_page(pager, i, PAGE_SIZE);
+  }
+}
+
+void clear_page(Pager *pager, uint32_t page_num, uint32_t size) {
+  pager_flush(pager, page_num, size);
+  free(pager->pages[page_num]);
+  pager->pages[page_num] = NULL;
+}
+

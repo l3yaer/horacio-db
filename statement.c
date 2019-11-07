@@ -1,10 +1,16 @@
 #include <stdio.h>
 #include "statement.h"
 #include "input.h"
+#include "table.h"
 
-PrepareResult prepare_insert(struct input_buffer* input_buffer, Statement* statement);
+typedef struct statement{
+  StatementType type;
+  Row row_to_insert;
+} Statement;
 
-PrepareResult prepare_statement(struct input_buffer* input_buffer, Statement* statement) {
+PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement);
+
+PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement) {
   if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
     return prepare_insert(input_buffer, statement);
   }
@@ -44,7 +50,12 @@ ExecuteResult execute_select(Statement *statement, Table *table) {
   return EXECUTE_SUCCESS;
 }
 
-PrepareResult prepare_insert(struct input_buffer* input_buffer, Statement* statement) {
+Statement *createStatement() {
+  Statement *statement = malloc(sizeof(Statement));
+  return statement;
+}
+
+PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement) {
   statement->type = STATEMENT_INSERT;
 
   char* keyword = strtok(input_buffer->buffer, " ");
