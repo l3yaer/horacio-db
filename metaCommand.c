@@ -1,7 +1,3 @@
-//
-// Created by Yago Teixeira on 2019-11-06.
-//
-
 #include "metaCommand.h"
 #include "input.h"
 

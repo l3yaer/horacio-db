@@ -1,6 +1,3 @@
-//
-// Created by Yago Teixeira on 2019-11-06.
-//
 #include <stdio.h>
 #include "input.h"
 

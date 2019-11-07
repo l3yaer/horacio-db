@@ -1,7 +1,3 @@
-//
-// Created by Yago Teixeira on 2019-11-06.
-//
-
 #ifndef HORACIODB_METACOMMAND_H
 #define HORACIODB_METACOMMAND_H
 struct input_buffer;
