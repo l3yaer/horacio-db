@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "cursor.h"
 #include "table.h"
 #include "pager.h"
@@ -28,6 +29,18 @@ Cursor* table_end(struct table* table) {
   cursor->end_of_table = true;
 
   return cursor;
+}
+
+Cursor* table_find(struct table* table, uint32_t key) {
+  uint32_t root_page_num = table->root_page_num;
+  void* root_node = get_page(table->pager, root_page_num);
+
+  if(get_node_type(root_node) == NODE_LEAF) {
+    return leaf_node_find(table, root_page_num, key);
+  } else {
+    printf("Search internal node not implemented yet");
+    exit(EXIT_FAILURE);
+  }
 }
 
 void* cursorValue(Cursor* cursor) {

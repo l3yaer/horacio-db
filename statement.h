@@ -24,7 +24,8 @@ typedef enum {
 
 typedef enum {
   EXECUTE_TABLE_FULL,
-  EXECUTE_SUCCESS
+  EXECUTE_SUCCESS,
+  EXECUTE_DUPLICATE_KEY
 } ExecuteResult;
 
 struct statement* createStatement();

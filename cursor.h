@@ -14,6 +14,7 @@ typedef struct cursor {
 
 Cursor* table_start(struct table* table);
 Cursor* table_end(struct table* table);
+Cursor* table_find(struct table* table, uint32_t key);
 void* cursorValue(Cursor* cursor);
 void cursor_advance(Cursor* cursor);
 
